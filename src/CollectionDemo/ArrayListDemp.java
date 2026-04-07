@@ -2,10 +2,10 @@ package CollectionDemo;
 import java.util.ArrayList;
 public class ArrayListDemp {
     public static void main(String[] args){
-        //Warning are thrown as any Object can be added recommended to be made generic
+        //Warning are thrown as any Object can be added recommended to use generic
         ArrayList a = new ArrayList();
         a.add(10);
-        a.add("Sangharsj");
+        a.add("Sangharsh");
         a.add('L');
         a.add(null);
         System.out.println(a);
