@@ -1,0 +1,679 @@
+1) can file with 2 classed renamed anything? Does the main method class should be the name of the file,
+
+Whenever program runs, it is run in RAM in area called JRE, where JVM uses certain memory areas called Stack and Heap, the methods are stored in a stack in the order they appear and they point to any object that was created in the heap. When a method ends that stack frame is discarded and the local variables also zucced. When a method is removed from stack frame that was pointing to a heap. It becomes a reference less object which will be GC later
+
+-----------------------------------------------------------------------------------------------------------------
+
+Method Overloading -> same name function with different parameter is also called false polymorphism, Compile Time polymorphism
+void add (int n, int m){
+    int ans = n + m;
+}
+    
+int add(int x, int y){
+    return x+y;
+}
+
+The above 2 are considered the same methods, java cares about method signature (name and parameters), return type doesn't matter.
+
+Consider
+
+calc.add(10,12);
+
+add(int a, double b)  --> If present alone, is able to handle, (return type should be double) implicit conversion
+
+but if 
+add(double a, int b)   --> also exists, you will get ambiguity issues. As both are capable of handling.
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+(6.5)
+Encapsulation is a process of giving controlled access to data members
+
+UnderEncapsulation we hide the details, so variables should be made private and accessable via getter and setter methods.
+Advantages: 1) You can have access control, apply rules on how or what is permitted
+2) You have a scope to change code in future without breaking things, call is the same, getThings() can have different implementations
+
+
+If you are using setters and if the local varible and the instance variable has the same name, it won't be assigned without the use of this keyword with the instance varible. Not a compile time issue, but the values won't be set. If the local varible names are different than the instance variables then it will work. ** This is called Shadowing problem.
+
+setId(int id){
+    id = id;
+}
+Won't work
+
+setId(int id){
+    this.id = id;
+}
+Works
+
+setId(int empId){
+    id = empId;
+}
+Also Works
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* Constructor is a specilized setter, that has same as the class and no return type.
+
+All the constructors, default or programmed has super() method call behind the scene or explicitly stated. Calls parent class constructor. Exception is this() method call.
+
+this();   -> Current class single parameterized constructor
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Boxing: Converting the primitive data type into its corresponding wrapper class object (int n1 = 10  ,  Integer n2 = Integer.valueOf(n1); )
+Auto Boxing : Automatic converting by Java compiler into its wrapper class (int n1 = 10  ,  Integer n2 = n1;  )
+Unboxing: Converting Wrapper class object back to its primitive data type (int n1 = n2.intValue(); manual )
+Auto Unboxing:Automatic converting by Java compiler from wrapper class to its primitive data type . (Integer n1 = Integer.valueOf(1)  ,  int n2 = n1; auto  )
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+When running program -> ClassLoader Subsystem , Runtime Data Areas , Execution engine 
+
+In CLSS -> Loading  -> Linking -> Initialisation
+
+Loading -> BootstrapCL , ExtensionCL, ApplicationCL
+
+Linking -> Verification -> Preparation -> Resolution
+
+Execution Engine -> Interpretor , JIT , GC
+
+In Linking, during preparation * if any static variable present, memory for it will be allocated in the heap location.
+*Initialisation , static blocks are executed
+
+JIT is used to assist Interpretor, when frequent code is repeated/multiple same calls. eg loops
+
+* Java is both compiled and Interpreted language. The java code is compiled into ByteCode by Java Compiler then JVM uses internally an Interpretor to get the machine code.
+
+* 
+static int a ;
+
+static{
+a = 10;
+sout(a);
+}
+
+p s v main(String[] args){
+    sout("Main");
+}
+
+* main is the starting point of application so the app starts with loading of that class and loading if any static elements
+here, the static var is created with default value at class loading(linking) and initialisation stage executes the static block, thus it runs before main method. so it prints 10 and then Main. *This happens because the main method was run from the same class which had the static things, If it were some other class that had this static initialization and we were running main, like we are doing now then there won't be any output, as jvm doesn;t know of the class it won't be loaded. But if we use any method or even create a class the things will execute. 
+
+Student s = new Student();
+
+When we write above line Student is created in heap with memory for the instance variables, and if there is a initialization block or java initialization block it will be executed before the constructor. With instance varibles the instatiation block is only called when we make an object, doesn't matter if it the same class or other, unlike static blocks
+
+* Static variable is useful when all the objects share the same varible, like if Student class, you want to get a count of current amount of students, a static varible would be good, we can increment count at every constructor when student is created. 
+**  For the above statment there is something which gets executed before any constructor and that is java instance block(OMGGGGG) so we need not write it in every constructor and incement the count in the instance block. (Code common for constructors we can use instance block)
+
+*There are no limits to the number of static or instance block.
+
+You can't use the static variable in static block, before declaring it. 
+
+In an application we can initialise the static variable direcly or using static block. Use static block when initialisation is not simple or conditional.
+
+The confusing part:
+class C {
+    static {
+        a = 10;   // ✔ allowed
+    }
+    static int a;
+}
+
+class C {
+    static {
+        System.out.println(a); //  ❌ not-allowed
+    }
+
+    static int a = 10;
+}
+
+*Writing to a forward static variable is allowed
+Reading it is not
+
+It exists logically but Java doesn't allow the read, and the static blocks are also executed from top to bottom
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Inheritance, subclass is a Superclass (has is a relationship , Dog is a Animal)
+
+*private members of class can not be inherited, we can access them from non-private methods, it ensures the proper encapsulation 
+* if a class is not extending anything, it is always extending the object class, Object class is parent class of all classes in Java
+* Doesn't support multiple inheritence, as it may cause ambiguity (if 2 data variable/method shared same name)
+
+*Constructor is not inherited but they are still executed as when we create a child class the constructors has a super(); call. It calls the parent class constructor.
+
+Inherited Methods  -> used as it is
+Overridden Methods -> modified to fit its use case
+Specialised Methods -> Very specific to its own
+
+* You can use a Parent class reference to create a child class Object, it is called Upcasting. You can access the inherited and overridden methods, but can't access the child specific methods. Only way to do that is cast the Parent to child and then we can access the child method. Temporarily changing the behavior of Parent type reference to child type class so that you can access specialized behaviour is called downcasting.
+
+eg: Animal Parent class has eat method, Dog child class has eat(Overridden) and trick method.
+
+
+Animal d = new Dog();
+d.eat();
+d.tricks();  //doesn't works 
+((Dog) d).tricks(); //It works, we ask the d which is of parent type to act like a child so we can access the child specialized method
+
+
+          Within class   Within package  Outside Package is-A   Outside package no is-A
+
+public       ✔               ✔                ✔                       ✔
+ 
+protected    ✔               ✔                ✔                       ❌
+
+<default>    ✔               ✔                ❌                       ❌
+ 
+private      ✔               ❌                ❌                       ❌
+
+
+
+*When an object is created all the variables are created in heap with a default value, post that {} block and after that constructor.
+
+Creating an object of child class will call the constructor of all the subsequent parent class this is due to presence of super() keyword. So creating an object of child class is equivalent to creating a parent class (data variables created and constructor is also called)
+
+*Consider you have a child class with var i and the parent also has var i to use parent class data variable we use super keyword. We can also use super keyword to referr to any overridden methods from Parent class. This can only refer to direct parent, no previous ancestor can be invoked with multiple super
+eg: Sysout(super.i);    
+
+* Things like super.super.i   to access a Grandparent is invalid, it will give error
+
+Overriding rules, 
+* Constructors can't be inherited so no overriding
+1) Cannot reduce the visibility while overriding inherited methods, you can however increase it
+2) Primitive return type cannot be change 
+3) We can have a Co-variant return type in case of returning a class. (It means, if the parent class method returns a class, the overriding method can return the child of that class)
+4) if you change the parameters of the method in child class, then that method will be considered the specialised method of that class. It will be an overloaded method.
+5) Private methods can't be inherited so can't be overidden
+
+*Confused
+-Static methods do get inherited
+-When we try to override the static method in the child class it will hide the parent class static method it will behave like a specialized method of child class (Overriding doesn't occur here)
+
+eg: Animal d = new Dog(); 
+both has an eat method, when we call eat, parents eat method is called (incase of regular method, we are able to access overridden methods even with parent reference, so the child class static method is acting like a specilised method which can't be accessed using Parent class reference variable) I feel it is more bonded as a class method, so when we call it uses the parent reference.
+
+*final class cannot be inherited, final method can be inherited but cannot be overridden.
+
+*Final and static methods are the methods which cannot be overridden, private can;t be inherited so no overriding
+
+
+----------------
+6.12
+*Runtime Polymorphism can be achieved only when we are overriding the parent methods and use parent type reference for child Object
+
+eg: CargoPlane, PassengerPlane, FighterPlane are extending AeroPlance class, and they override the methods. We create a parent method, now same method call can any child method depending on the object type.
+
+eg:
+
+public void permit(Aeroplane ap){
+    ap.takingOff();
+    ap.flying();
+    ap.landing();
+}
+
+CargoPlane cp = new CargoPlane();
+FighterPlane fp = new FighterPlane();
+permit(cp);
+permit(fp);
+
+------------------------------
+
+* A class which has undefined methods can be called as an Abstract class.
+-It can have abstract method and concrete methods, even if a single abstract method, whole class should be marked as Abstract
+-The class which extending the abstract class must override all abstract methods or it has to be declared abstract
+*We can create reference of abstract method to achieve polymorphism, 
+*Abstract class will have a constructor but they are executed due to child class super() call, *extending class will atleast have a default constructor and the first line it executes is super()
+-Consturctor can't be abstract, its illegal. Class and methods can be abstract and not a variable.
+- Abstract and Final can't be used together, because final class can't be inherited and final method can't be overidden, abstract are used when you want to inherit and override in future
+
+- It is used to in requirement specification, we specify what we want with the method signature, they can't be changed in the implemented class and remain consistent, across multiple implementations, the concrete methods are useful utility that remains common to all users. 
+
+---------------
+* Requirement Specification or a completely abstract class, 
+
+* The interfaces can be used to get multiple inheritance as well as complete abstraction. (100% abstract class)
+
+-*- Interfaces were introduced to connect database with Java application, it was the requirement specification for the Database Vendors.
+
+-Interface method are public and abstract by default, most rules same as abstract class. Multiple interfaces can be implemented unlike Classses. It will extend first and implement later
+eg:
+class Calc extends ScitificCalci implements Log1, Log2 
+
+* One interface cannot implement another interface, its illogical, however it can extend another interface
+
+interface Demo implements previousDemo {
+}
+
+*If we have 2 interfaces with same signature and a class is implementing both, we can't give them separate implmentation. 1 method will be defined for both, no issues
+
+** The variables by default are public,static and final
+
+-we cannot have a constructor in Interface 
+
+* Java 8 introduce default method in interface to provide method body that is available to all the implementing classes, regular method just qualified by default keyword. This method is inherited by implementing class, It can be overridden but is not necessary.
+eg: default void display(){
+	sysout("Ye Le");
+}
+
+
+*Static methods can also be implemented in interface, method can't be abstract, need to give define it. We can access it with the interface and it is not inherited by the implementing class
+
+Implementing class can have specialised methods, if interface reference is used, we can use them with downcasting, or else they are readily available
+
+* Interface file is also saved by .java extension
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*Loose Coupling (8.3)
+
+
+Consider you have multiple classes, If you want to use a class you can either create its object in your class (Composition) or you can inherit it so you have the required methods available(Inheritence). But if the initial class is deleted you will be zucced, this is tight coupling. 
+
+*It is a design principle, when you are building a business logic, always implement it as an interface. An interface will allow you to implement any required object at the rutime. (Its important that we have multiple implementations for that interface, so the application can use what it wants)
+
+Program for it is implemented in documents/ideaProjects/AmazonAssociate
+
+*The class which is using the services of the other class() is called as the service class(Amazon class), Whichever classes that are used by target class are dependable objects.
+If a dependable object is injected via constructor/Setter that is called dependency injection (Constructor or Setter injection) 44:19
+
+In the example the control of dependable object creation was onto the main method, this is the inversion of control, instead of the programmer creating and maintaining the object the Main class do it for you and Spring Framework is capable of doing the inversion of control (it does all target and dependable classes)
+
+*The reason people is after spring framework is it makes the application loosely coupled.
+
+When the framework creates the object for you it is called Spring Bean 
+
+*Prefered way to create a bean would be Setter injection, as during constructor injection there is a chance the dependable object is not ready, so we won;t be able to create the target onject as well. This isn't the case with the setter, object is ready and can be accessed
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+If a class is extended then we can provide a overriding method for that object 
+
+
+
+
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Function Interface and Lambda
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*For 2d arrays consider an example, when you have n things and each n things have m things
+
+eg: 3 class has 4 students each, int[][] arr = new int[3][4]
+
+The following is called Jagged Array
+You have also have 3 class with varying students, int[][] arr = new int[3][] , int[0] = new int[3]; int[1] = new int[4];
+
+*Now if you have 2 schools, with 2 class each, each class has 4 students
+int[][][] arr = new int[2][2][4];
+Jagged, 2 schools, 2 class and 3 class, 2students each, 3 student, 2 student 4 student
+int[][][] arr = new int[2][][];
+arr[0] = new int[2][2]; //school 0 has 2 class, each class has 2 students
+
+arr[1] = new int[3][]; //school 1 has 3 class
+
+arr[1][0] = new int[3];
+arr[1][1] = new int[2];
+arr[1][2] = new int[4];
+
+AI:
+arr (2 schools)
+├── School 0 → 2 classes, each with 2 students
+│   ├── Class 0 → [0, 0]  (2 students)
+│   └── Class 1 → [0, 0]  (2 students)
+│
+└── School 1 → 3 classes, varying students
+    ├── Class 0 → [0, 0, 0]  (3 students)
+    ├── Class 1 → [0, 0]     (2 students)
+    └── Class 2 → [0, 0, 0, 0]  (4 students)
+
+* In C we have buffer overrun problem, that is we are able to access array memory even out of bounds
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+String collection of characters,
+In Java:
+|_ Immutable String - String class
+|_ Mutable String - StringBuffer and StringBuilder
+
+In Java we have a area in Heap called String Costant Pool, where duplicate values are not allowed. THey however may exist in the Heap.
+
+*We also have Integer wrapper pool, it has value till 128. Most frequently used values of Integer.
+
+* If string literal is present it is created in SCP, if we are making a new string object then it will be created on SCP as well as heap
+
+* == between 2 strings checks if they are the same reference, equals method checks for the content of the Strings. 
+
+* if a string literal is written it is created in String Pool Constant, and if a string is created as a result of any string method due to its immutability a new string is returned so its created in heap. Even if the references hold the same value, they are pointing to different things one is in SCP and One is on heap, different objects. 
+
+* s1.compareTo(s2)  -> This method does a lexicographically compares 2 strings, it return the difference between the ASCII values of the charcters of each string
+- For same strings it returns 0
+- When s1 is bigger a positive integer value
+- When s2 is bigger a negative integer value
+
+eg: "ab".compareTo("ad");  , it returns negative value, first charcters a and a are same so 0 diff, b and d are not, b-d = -2, so anywhere the diff is not 0, will be returned.
+If both the strings differ in length, the comparison will occur for the shorter length of the string
+
+* s.split("char")   -> return an array separated by char
+
+** How to create an immutable class -> create a class whose data variables can only be accessed via methods which will return new object if data is to be modified.
+
+-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^-^
+
+* StringBuilder and StringBuffer has an initial capacity of 16, it increase by current * 2 + 2
+
+** If you pass a string in SB constructor the capacity would be 16 + the length of the passed string
+
+* String Buffer came first(1.0) and StringBuilder(5.0) all methods are same. SBuffer methods are synchronised. 
+
+* sb.trimToSize()  -> It will make the string buffers capacity equal to its length
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Exception is a event that occurs during run time, which abnormally stops the execution of the program. 
+
+Code after the line causing the exception won't be executed.
+
+*Exception occur,the method in which it occured creates that object and jvm receives the exception with details of error. JVM returns to the same method/stack to check if handler is present, if not it is given to default handler. In C, the exception is handled directly to OS it causes crash.
+
+* You can use try with catch, try with catch & finally and try with finally
+
+*With throws keyword we can state what kind of Exception a method throws, that method is also not responsible to handle it, caller method will need to handle it. *This is to inform that a method will throw certain exception, so it better be handled.
+
+* We should always try to handle exception, if not minimum duck it using throws exception
+
+* throw is used to throw an exception, we can do this to propogate the exception in the heiererchy (exception is handled but rethrown to the called method) 
+
+? Finally will be executed or without exception. Include code that runs independently, or clean up code, closing resource? Check if the flag was set in the exception, if exception ocurred catch block will set in and we can close the resource
+
+* Good method is try with resources, it will automatically turn it off.
+
+** If you have try and finally. if the try statement has return, finally will still be executed. if both has return statemwnts finally return will dominate the return value.
+
+* Is functions are called inside each other, a stack overflow error will occur.
+
+* Object, Throwable, Error Exceptions, most cases with able at the back are Interfaces, only exception is Throwable
+
+* Exceptions whose possibilty is checked by compiler, during compile time is called Checked Exception, eg IOException (FileNotFoundException), InterruptedException 
+
+**Parent throws nothing, child throws Nothing, Child can throw unchecked exception, child can't throw Checked and Partially Exception class.  
+ Parent throws Unchecked Exception, child throws Nothing, Child can throw unchecked exception, child can't throw Checked and Partially Exception class.  
+ Parent throws Checked Exception, child throws Nothing, Child can throw unchecked exception, child can throw Checked (same as parent) and can't throw Partially Exception class.  
+
+* We can have an Or in catch block, called Multy Catch block
+
+** You can create a custom exception by creating a class that extends any kind of Exception class(Exception, Runtime Exception). If it is extending Exception class then it will be a checked Exception. 
+
+- If you want a message when you throw the Exception, create a constructor in Custom Exception class and pass the string to super(str), the actual definations and many methods area actually defined in the Throwable class
+
+catch(NegativeArrayIndexException | ArrayIndexOutOfBoundsException e){
+	sout(e.printMessage())
+}
+
+                                    Object
+                                       |
+                                       |
+                                   Throwable
+                                       |
+                    ___________________|___________________
+                   |                                       |
+                   |                                       |
+                 Error                                 Exception
+                   |                                       |
+         __________|__________                  ___________|___________
+        |                     |                |                       |
+        |                     |                |                       |
+  StackOverflowError   OutOfMemoryError   (Checked)             RuntimeException
+                                           Exceptions             (Unchecked)
+                                               |                       |
+                                     __________|__________         ____|________________________
+                                    |                     |        |                            |                  
+                                    |                     |        |                            |
+                               IOException          SQLException  NullPointerException  ArithmeticException
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Collections:
+
+* Collection is an interface that serves as the root of the Collections Framework, an architecture used to store, manage, and manipulate groups of objects as a single unit
+OR
+ Java Collection Framework (JCF) is a set of classes and interfaces that provide ready-made data structures to store and manipulate groups of objects efficiently. 
+
+                                           Iterable (I)
+                                               ↑
+                                               |
+                                         Collection (I)
+                                               |
+       ________________________________________|________________________________________
+      |                                        |                                        |
+      |                                        |                                        |
+   List (I)                                 Queue (I)                                Set (I)
+      ↑                                        ↑                                        ↑________________________
+      |                                        |                                        |                        ↑
+      |______________________               Deque (I)                            SortedSet (I)                HashSet 
+      |            |         |                 ↑                                        ↑                        :
+      :            :         :                 :                                        |                        :
+      :            :         :                 :                                 NavigableSet (I)           LinkedHashSet
+  ArrayList      Vector   LinkedList <.........:                                        ↑
+                   ↑         :                 :                                        :
+                   |         :                 :                                        :
+                 Stack       :            ArrayDeque                                 TreeSet
+                             :
+                             :......................................                  
+                                                                   :                     
+                                                             PriorityQueue               
+                                                                                   
+
+1) ArrayList
+
+* It is a dynamic array, it will grow with addition of new element and it can shrink with the removal of elements.
+
+* ArrayList is has a default capacity of 10, when its completed it copies elements to a new array, which has newCap = cap + 1/2 *cap, ArrayList are continues like the array. So all of them are moved to new space to accomodate new elements
+
+- al.add(elem); appends the elem to the end of the ArrayList.
+
+- al.add(index,elem) -> this shifts the elements from index to the right, and the fills the index, ineffecient, (if lots of element better and inserting at start, create new add the element, and then add all the old arraylist)
+
+-al.addAll(al0); -> adds al0 arraylist to new arrraylist
+
+**Best for fetching values, it does it in O(1)
+
+
+
+2) LinkedList
+
+*It implments, List(I) as well as Deque(an interface that implements queue), internally follows DLL Data Structure
+
+-On linked list objects has offer method other than add method, offer method might reject the offer to add the element in the list, while add method adds to the list.(This method not in ArrayList), the poll and peek methods are returning the initial elements of the Linked List.
+
+- It has methods from List and the above peek,poll, and, offer methods were from Deque interface
+
+** Best for inserting, it uses DLL so new node is created and attached.
+
+
+
+3) ArrayDeque 
+
+It implements deque and follows double ended queue datastructure, it allows insertion from front and insertion from rear but doesn't allow the insertion in the middle. It has methods related to queue like addFirst and addLast. It maintains the insertion order, no index based insertion
+
+
+4) PriorityQueue
+
+- It is implemeting the queue interface directly and follows the min heap data structure. It is printed in the form of levels of the binary tree.
+
+- It doesn't maintain insertion order, no index based positions
+
+- It is usually a binary tree, (Has 2 approaches of how an element position is decided, bottom up or top to bottom), consider we are going in an order root node is filled then left child and then right child, this rule is followed for the entire structure. First element is added to root, from the second element it is checked whether element is in proper position, so they are compared with its root, if the new elem is smaller the position is swapped, else they keep filling. It doesn't matter if the node is at left or right it is compared and swapped with its root. Here is an example,
+Order of insertion 100,50,150,25,75,125,175, sout -> 25, 50, 125, 100, 75, 150, 175
+
+          25
+        /    \
+      50      125
+     /  \    /   \
+   100  75  150  175
+
+
+
+
+
+5) TreeSet
+
+- It is implementing, NavigableSet -> SortedSet -> Set -> Collection -> Itetable, these are all interfaces. It is a sorted set and implements Binary Search Tree logic, we get the sorted results when we do an Inorder traversal. 
+** The insertion is always done by comparing the top root node and then entering the below levels. See the below example here
+25, 50, 75,40, 97, 100, 1225, 130   - You might think it is a skewed tree, 25 50 75 and then 40 to the left of 75 will be wrong
+
+      25     
+        \
+         50
+        /  \
+      40    75
+              \
+               97
+                 \
+                  100
+                    \
+                    1225
+                    /
+                  130
+
+- Duplicates are not allowed.
+
+- some methods, ts.tailSet(elem) , in the sorted list elements after current including current, 
+ts.headSet(elem) , elements before the elem, excluding the elem
+
+
+*** If you are looking for the search options, ArrayList and LinkedList contains(elem) or indexOf(elem) does a linear search, however if you have index and used get method ArrayList will work in order of 1. LinkedList can't O(n). PQ and ADQ aren't indexed but they do have contains method which works in Linear time, this method which is common for most collections. TreeSet has a get method which works in O(logn) time great for search operation. 
+
+**AL and LL has overloaded remove methods, 1 takes object other takes integer index, if it is an Integer list, make sure to box the value passed to the remove method
+
+
+6) HashSet - It implements the set interface, it is used to hold unique values and return them in O(1) time, Insertion is also O(1) only in worst cases both can be O(n) or O(logn)
+
+Hashing is a process of converting an object into a unique integer(hashcode) that can be used to index the bucket array. Initially we have hashcode, a hash fucntion is applied to it, it is used because hashcode can be very big and negative. Java applies supplemental hash function (simply counters the ill effects). The index is calculated, index = hash & (n-1) , n is size of bucjet array and power of 2 always. The default capacity is 16, it increase when 16 *0.75 = 12, 13 items entered, rehashing occurs, it is expensive and might change the existing indexes
+
+Each bucket in array acts as a header for a linked list, if collision occurs it is appended in the list, if single bucket too crowded (8 is threshold) it is converted to Balanced Binary Search Tree.
+
+
+What I understand:
+Internally, whenever we add an element to hashset, it is stored in a bucket array, which element goes in the specific bucket is decided by the hashfunction , it is such that each elements get into a specific bucket, it has a load factor of 0.75, so 75 percent of default size reached then the internal array will increase its side to avoid collision. Collision is a phenomenon where more than 1 element fits the same bucket, that array becomes the head of the LinkedList and the second element is added there, more number of elements in same bucket then it will become a tree in order to reduce the time required for fetching. 
+
+
+7) LinkedHashSet - It is a HashSet that maintains the insertion order with the features of HashSet. It implements Hashset. (Added in Java 5, rest were added in Java 2)
+
+
+----->
+
+* Iterator is an interface(skip direct to the use of it) used to traverse tor loop through Collections like AL,LL, HS. It is like a cursor that lies in front of the collection, and it has methods like hasNext() (boolean) and next() -> jump and fetch next. which it used to iterate.
+
+Iterator itr = al.iterator();
+while(itr.hasNext()){
+	Sout(itr.next());
+}
+
+**** um, when you can use the for loop or any other loop to access elements why do we use iterator?
+
+Here is a code: 
+
+for(int i=0;i<al.size();i++){
+    System.out.println(al.get(i));
+    al.add(54);
+}
+
+This will run infinitely and only terminate when you run out of space, here we are concurrently modfying the the ds along with the fetching, Iterator doesn;t allow that and throws concurrent modification exception if you run the follwing code
+
+Iterator itr = al.iterator();
+while(itr.hasNext()){
+    System.out.println(itr.next());
+    al.add(200);
+}
+
+Another thing I found is this, for each loop also breaks
+for(Object i:al){
+    System.out.println(i);
+    al.add(30);
+}
+
+
+**This is fail-fast mechanism, it crashes immediately rather than potentially returning wrong data or entering an infinite loop. The collection has internal modCount variable, when iterator tries moving if the expected mod count is not same as collection mod count then it throws the exception.
+
+Iterator has a remove method, which can be used:
+Iterator itr = al.iterator();
+while(itr.hasNext()){
+    if(itr.next() == 20)
+        itr.remove();
+}
+
+If you use the same code with CopyOnWriteArrayList then we wont get an concurrent modidication error, however the object/integer is also not added to the list, that is a failure but since no exception it is fail safe mechanism
+
+
+** We also have ListIterator class, it works in a similar way as an iterator, but we can start at any index and we have methods like hasPrevious() so we can traverse back.
+
+-----------
+
+** We can't use Parent List reference to hold a child List reference. It is not allowed and gives Incompatible types error, this can be solved using Generics 
+
+
+Instead of creating an instance of List of certain type we can use UpperBound or LowerBound depending on our requirements
+
+ArrayList<? extends Human> hlist3 = new ArrayList<>();  // Here have a placeholder/wildcard so Human or any child class of it, this is upperbound. This list can now hold Human list or its child list
+
+Similarly 
+
+ArrayList<? super Human> hlist4 = new ArrayList<>(); // Here is lowerbound, can be Human or its upper class, can go lowest as Human. Here the list can hold Object class list
+
+More of the details is in the implemented class of Generics package in Java class
+
+
+*List<Integer> list = new LinkedList<>(); we can't get all the methods of LinkedList class can only get list interface methods and overridden methods
+
+
+*Arrays.asList(comma separated values, return a List);
+------------
+
+** Hey, I understand the reason for priority Queue and TreeSet not allowing the null values, as they compare the inserted data and put them in the binary structure, why does the ArrayDeque do not allow null value?
+
+ans -> 1) the restriction on null in ArrayDeque is a functional design choice rather than a structural limitation like the ones in TreeSet or PriorityQueue, In the Queue and Deque interfaces, methods like poll() and peek() return null to tell you that the collection is empty. You call poll() and get null. Is the queue empty, or was the first item in the queue actually a null value? You would have to call isEmpty() every single time to be sure. 2) It is optimised as no null allowed
+
+Here is a summary on all the Collections
+
++-----------------+-------------------------+--------+----------+----------+--------+--------+-------+
+| Collection Class| Internal Structure      | Order  | Iterator | ListIter | Index  | Dupli. | Nulls |
++-----------------+-------------------------+--------+----------+----------+--------+--------+-------+
+| ArrayList       | Dynamic Array           | Yes    |   Yes    |   Yes    |  Yes   |  Yes   |  Yes  |
+| LinkedList      | Doubly Linked List      | Yes    |   Yes    |   Yes    |  Yes   |  Yes   |  Yes  |
+| HashSet         | Hash Table              | No     |   Yes    |   No     |  No    |  No    |  Yes  |
+| LinkedHashSet   | Hash Table + L.List     | Yes    |   Yes    |   No     |  No    |  No    |  Yes  |
+| TreeSet         | Red-Black Tree (BST)    | Sorted |   Yes    |   No     |  No    |  No    |  No   |
+| PriorityQueue   | Binary Heap (Min Heap)  | Priori |   Yes    |   No     |  No    |  Yes   |  No   |
+| ArrayDeque      | Circular Array (2 end Q)| Yes    |   Yes    |   No     |  No    |  Yes   |  No   |
++-----------------+-------------------------+--------+----------+----------+--------+--------+-------+
+
+----------------------------
+*Comparator -> It is an interface which is used to provide a custom sorting order to a collection. It has a method= compare(T o1, T o2)
+How to use
+1) implement interface, pass a object of that class in the sort method.
+2) Anonymous inner class, since it has only 1 method, you add while creating an object, or we can add it directly in the sort method.
+3) Lambda expression
+
+Have the code in CollectionDemo
+
+****Comparator should be used when you need to sort in a certain order, or if you don;t have the access to modify the class you want to sort.
+
+**** Comparable is a interface that is used to provide a default natural sorting order, it should be used when you have access to the class and can modify it.
+
+CompareTo is a method which comes from Comparable interface and it gives the natural sorting order, we can use it in comparator instead of writing our own logic for it, 
+Examles:
+1)
+Integer x = 10;
+Integer y = 20;
+System.out.println(x.compareTo(y)); // Returns -1 (because 10 < 20)
+
+2)
+String a = "Apple";
+String b = "Banana";
+System.out.println(a.compareTo(b)); // Returns a negative number (A comes before B) 
+
+also Boolean has true > false.
+
+
+
+
