@@ -3,6 +3,11 @@ package CollectionDemo;
 import java.util.Comparator;
 import java.util.TreeSet;
 
+import java.util.Comparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public class TreeSetDemo {
     public static void main(String[] args){
         Comparator<Integer> MyComparator = new Comparator(){
