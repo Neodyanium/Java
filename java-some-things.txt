@@ -611,6 +611,7 @@ If you use the same code with CopyOnWriteArrayList then we wont get an concurren
 
 ** We can't use Parent List reference to hold a child List reference. It is not allowed and gives Incompatible types error, this can be solved using Generics 
 
+ArrayList<Object> list = new ArrayList<Integer>(); //not allowed
 
 Instead of creating an instance of List of certain type we can use UpperBound or LowerBound depending on our requirements
 
@@ -673,6 +674,120 @@ String b = "Banana";
 System.out.println(a.compareTo(b)); // Returns a negative number (A comes before B) 
 
 also Boolean has true > false.
+
+-----------------------------------------------------
+**Date Time API was introduced in Java 8, it is present in java.time package , it is the recommended way to represent time or date in Java,
+
+The Date class from Util package is deprecated, same is the case for SQL package, both are not recommended to use. 
+**The sql date api has no 0 parameter constructor
+
+The new Date time API has class like LocalDate and LocalTime, that holds the date and time data, they don't use new keyword and has factory methods like LocalDate.now() or LocalTime.now().
+You have other factory methods to get different dates or time.
+
+**We also have the comined DateTime class 
+
+---------------------------------------------------------------
+**Map -> Map in an interface, it is used to store a key-value pair (together it is called Entry, an internal class of Map), there is no restriction what a key or value could be. 
+
+*We cannot have duplicate keys, we can have duplicate values, if duplicate key is added it will override the existing value.
+*we can have null value as key
+
+
+** In Hashtable, we can't have null key or value, NPE as it invokes hashcode method on it.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*Enums are group of named constant, or a user defined data types, an example would be Week,where each day is a type of week. 
+
+enum Week{
+    MON,TUE,WED,THU,FRI,SAT,SUN; 
+}
+
+*Semicolon here is redundant, if you don't add any code after. 
+
+Every thing here is a variable name as well as value. 
+
+System.out.println(Week.MON); /prints->//Mon
+
+//This method returns the index of the constant in the enum
+int index = Week.THU.ordinal(); //3
+
+Week.values() -> this will return the array will all the name constants 
+
+**Enum works very similar to class, every named constant is behind the scene a static final object that enum
+
+for the Week enum it is like
+public static final MON = new Week();
+
+Since new keyword is involved a constuctor is present. We can use this objects (MON,TUE....SUN) to access a local variable or methods. for every enum an object is created
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+***Annotations
+
+
+Java 5 introduced annotations, it is a way to provide metadata/maintaining information about the code to the developers, to compiler, to JVM or spring.
+
+Eg, conside a simple @Override annotation, it tells us that we need to override the following method, the compiler also flags if we make any error, we can add annotation only to the specific places.
+
+**How to create an annotation, its simple create an interface and add @ at the start of interface
+eg:
+
+@interface OnePlus{
+	
+}
+
+Need to specify 2 things, where to apply the annotation and its reach.
+
+**Meta annotations are annotations used to create annotations, 
+* @Target() is a meta annotation which specifies where this annotation is applicable, it expects an enum of ElementType (field, constructor, class)
+* @Retention() is retention policy, till when you want the annotations power, it expects RetentionPolicy enum (runtime, compile time)
+
+Sometimes we need to pass values to the annotation, this are called one valued, 2 valued or multi valued annotations, we provide the attribute in the annotation
+
+syntax:
+
+datatype var_name();
+or 
+datatype var_name() default value;
+
+eg: String name();
+String name() default "Harsh";
+
+-We need to provide this else we can't use the annotation, this doesn't apply if they have default values.
+
+* we can provide the multiple enums in curly braces, for the meta annotations. 
+eg; @Target({ElementType.TYPE,ElementType.CONSTRUCTOR})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
