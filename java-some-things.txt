@@ -832,6 +832,97 @@ waiting for the resource to be available, they will never be able to come out of
 DeadLock. This situation arrives when you use synchronized keyword improperly.
 
 
+****While reading Deadlock, some questions I had, (It is important to note that I have nested sync blocks, so it won't
+release resources until it performs all the stuff inside)
+Q. Why does the Thread not release the resource while sleeping?
+-> When a thread calls Thread.sleep(), it tells the JVM: "I am going to take a nap for 3 seconds, but I am still in the
+middle of my work." In Java, a synchronized block is like a physical room with a door that the thread locks from the
+inside. Thread.sleep() doesn't release lock, Because Thread 1 is still holding the lock on res1, Thread 2 (which is
+trying to enter synchronized(res1)) is moved to the Blocked State. It must sit outside that "room" until Thread 1
+manually exits the synchronized block.
+
+Q. Why does it not release resources after waking up?(I meant as it goes from sleeping to Runnable, it won't run unless)
+-> It doesn't release the resource because it hasn't finished the code inside the curly braces { ... } of the
+synchronized block. A lock is only released when:
+   1) The thread reaches the end of the synchronized block.
+
+   2) An Exception occurs that kicks the thread out of the block.
+
+   3) You explicitly call .wait() (which is different from sleep()).
+
+Thread 1 is actually holding three locks at once by the time it reaches the innermost block. It won't let go of res1
+until it finishes res2 and res3 and "backtracks" out of all the curly braces.
+
+Q. How does the Thread know where to continue? (Since it went to Runnable state, how does it know where to start?)
+-> Every thread has its own Program Counter (PC) Register and a JVM Stack. PC reg. has the current command address and
+the stack has the state of local variables. When Thread 1 goes to sleep, the JVM saves the "Bookmark" (the line
+Thread.sleep(3000)). When it wakes up and the CPU gives it time again, the thread looks at its PC Register and says:
+"Okay, I just finished  line 15, now I move to line 16." It never restarts the run() method from the beginning unless
+you manually code a loop to do so.
+
++========================================================================+
+|                    JAVA THREAD LIFECYCLE (STATES) Diagram              |
++========================================================================+
+|                                                                        |
+|      Thread t = new Thread();                                          |
+|                |                                                       |
+|        +-------+-------+                                               |
+|        |      NEW      |                                               |
+|        +-------+-------+                                               |
+|                | t.start()                                             |
+|                V                                                       |
+|        +-------+-------+                                               |
+|        |   RUNNABLE    +<----------------------------------+           |
+|        | (Ready to run)|                                   |           |
+|        +--+--+---------+                                   |           |
+|           |  ^                                             |           |
+|Thread     |  |                                             |           |
+|Scheduler  |  |                                             |           |
+|selects t  |  |Yield/Pre-empt                               |           |
+|           V  |                                             |           |
+|        +-----+--+-------+                                  |           |
+|        |   RUNNING      |                                  |           |
+|        | (Using CPU)    +--------+                         |           |
+|        +--+--+-------+--+        |                         |           |
+|           |  |       |           |                         |           |
+|   FINISHED|  |       |           |                         |           |
+|   run()   |  |       |           |                         |           |
+|           V  |       |           |                         |           |
+|      +----+--+---+   |           |                         |           |
+|      | TERMINATED |   |           |                         |           |
+|      +-----------+   |           |                         |           |
+|                      |           |                         |           |
+|                      |           |                         |           |
++======================V===========V=========================V===========+
+|             TRANSITIONS *FROM* RUNNING STATE (NON-RUNNABLE)            |
++========================================================================+
+| [CAUSE]                        | [TARGET STATE]         | [WAKE TRIGGER]|
+|--------------------------------|------------------------|---------------|
+|                                |                        |               |
+|  1. synchronized(obj)          |      BLOCKED           | Lock          |
+|     (Waiting for lock) --------> (Waiting for Monitor) --> acquired      |
+|                                |                        |               |
+|                                |                        |               |
+|  2. obj.wait()                 |      WAITING           | Another thread|
+|     (Releases lock) -----------> (Indefinite Wait) ----> calls notify()|
+|                                |                        |               |
+|                                |                        |               |
+|  3. t.join()                   |      WAITING           | Target thread |
+|     (Waits for other thread) --> (Indefinite Wait) ----> terminates    |
+|                                |                        |               |
+|                                |                        |               |
+|  4. Thread.sleep(time)         |    TIMED_WAITING       | Time          |
+|     (Keeps locks) -------------> (Timed Wait) ---------> expires        |
+|                                |                        |               |
+|                                |                        |               |
+|  5. obj.wait(time)             |    TIMED_WAITING       | notify() OR   |
+|     (Timed Wait w/ Release) ---> (Timed Wait) ---------> Time expires  |
+|                                |                        |               |
+|                                |                        |               |
+|  6. LockSupport.park()         |      WAITING           | unpark() calls|
+|     (Low-level wait) ----------> (Waiting) ------------>               |
+|                                |                        |               |
++========================================================================+
 
 
 
@@ -839,6 +930,107 @@ DeadLock. This situation arrives when you use synchronized keyword improperly.
 
 
 
+
+
+Hey, I have a question related to DeadLock. Consider the following code example
+
+class LibraryImpl extends Thread{
+
+
+
+    String res1 = "Java";
+
+    String res2 = "Springboot";
+
+    String res3 = "DSA";
+
+
+
+    public void run(){
+
+        String name = Thread.currentThread().getName();
+
+        if(name.equals("Student1")){
+
+            try {
+
+                System.out.println(name + " has entered the library");
+
+                synchronized(res1) {
+
+                    System.out.println(name +" has acquired "+res1);
+
+                    Thread.sleep(3000);
+
+                    synchronized(res2) {
+
+                        System.out.println(name +" has acquired "+res2);
+
+                        Thread.sleep(3000);
+
+                        synchronized(res3) {
+
+                            System.out.println(name +" has acquired "+res3);
+
+                            Thread.sleep(3000);
+
+                        }
+
+                    }
+
+                }
+
+            }catch (Exception e){
+
+                e.printStackTrace();
+
+            }
+
+        } else{
+
+            try {
+
+                System.out.println(name + " has entered the library");
+
+                synchronized(res3) {
+
+                    System.out.println(name +" has acquired "+res3);
+
+                    Thread.sleep(3000);
+
+                    synchronized(res2) {
+
+                        System.out.println(name +" has acquired "+res2);
+
+                        Thread.sleep(3000);
+
+                        synchronized(res1) {
+
+                            System.out.println(name +" has acquired "+res1);
+
+                            Thread.sleep(3000);
+
+                        }
+
+                    }
+
+                }
+
+            }catch (Exception e){
+
+                e.printStackTrace();
+
+            }
+
+        }
+
+    }
+
+}
+
+
+
+When a thread 1 has executed and slept, the other thread2 gets a chance so it gets in the blocked state waiting for the resource, why does it not release the resource it currently has it has already executed its run method. When the thread1 is
 
 
 

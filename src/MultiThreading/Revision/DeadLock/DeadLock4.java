@@ -1,4 +1,4 @@
-package MultiThreading.Revision;
+package MultiThreading.Revision.DeadLock;
 
 /**
  * We are considering an example where 2 students are entering a library, the library has 3 books that both the
@@ -116,9 +116,7 @@ class LibraryImpl extends Thread{
     }
 }
 
-
-
-public class DeadLock {
+class DeadLock {
 
     public static void main(String[] args) {
 
