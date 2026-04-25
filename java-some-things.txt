@@ -834,6 +834,9 @@ DeadLock. This situation arrives when you use synchronized keyword improperly.
 
 ****While reading Deadlock, some questions I had, (It is important to note that I have nested sync blocks, so it won't
 release resources until it performs all the stuff inside)
+
+***Remember Java's Mul
+
 Q. Why does the Thread not release the resource while sleeping?
 -> When a thread calls Thread.sleep(), it tells the JVM: "I am going to take a nap for 3 seconds, but I am still in the
 middle of my work." In Java, a synchronized block is like a physical room with a door that the thread locks from the
@@ -924,6 +927,18 @@ you manually code a loop to do so.
 |                                |                        |               |
 +========================================================================+
 
+*** Daemon thread is a thread working in background and it has to execute at least once, In Java the grabage collector is a Daemon thread.(It can also execute when others are executing)
+
+* How to create a Daemon Thread: 
+1) Create thread
+2) Use setDeamon() method to make the thread a Daemon thread
+3) Lower the priority of thread. 
+4) Define the task of the Daemon Thread in an infinite loop.
+
+It usually follows the main thread and may execute while main thread is executing but it definitely runs at the end of the program.
+The infinite recusion doesn't occur because they are executed by Daemon Thread not by any other thread and daemon thread follows root of main thread.
+
+* Garbage Collector is a daemon thread so it has to execute at least once after the main thread. It might run any number of times but it definitely runs at least once
 
 
 
@@ -932,105 +947,11 @@ you manually code a loop to do so.
 
 
 
-Hey, I have a question related to DeadLock. Consider the following code example
-
-class LibraryImpl extends Thread{
 
 
 
-    String res1 = "Java";
-
-    String res2 = "Springboot";
-
-    String res3 = "DSA";
 
 
-
-    public void run(){
-
-        String name = Thread.currentThread().getName();
-
-        if(name.equals("Student1")){
-
-            try {
-
-                System.out.println(name + " has entered the library");
-
-                synchronized(res1) {
-
-                    System.out.println(name +" has acquired "+res1);
-
-                    Thread.sleep(3000);
-
-                    synchronized(res2) {
-
-                        System.out.println(name +" has acquired "+res2);
-
-                        Thread.sleep(3000);
-
-                        synchronized(res3) {
-
-                            System.out.println(name +" has acquired "+res3);
-
-                            Thread.sleep(3000);
-
-                        }
-
-                    }
-
-                }
-
-            }catch (Exception e){
-
-                e.printStackTrace();
-
-            }
-
-        } else{
-
-            try {
-
-                System.out.println(name + " has entered the library");
-
-                synchronized(res3) {
-
-                    System.out.println(name +" has acquired "+res3);
-
-                    Thread.sleep(3000);
-
-                    synchronized(res2) {
-
-                        System.out.println(name +" has acquired "+res2);
-
-                        Thread.sleep(3000);
-
-                        synchronized(res1) {
-
-                            System.out.println(name +" has acquired "+res1);
-
-                            Thread.sleep(3000);
-
-                        }
-
-                    }
-
-                }
-
-            }catch (Exception e){
-
-                e.printStackTrace();
-
-            }
-
-        }
-
-    }
-
-}
-
-
-
-When a thread 1 has executed and slept, the other thread2 gets a chance so it gets in the blocked state waiting for the resource, why does it not release the resource it currently has it has already executed its run method. When the thread1 is
 
 
 
