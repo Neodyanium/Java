@@ -19,6 +19,7 @@ build/
 # IDEs
 .idea/
 .vscode/
+.out/
 *.iml
 
 # OS files
