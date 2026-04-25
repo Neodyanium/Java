@@ -761,22 +761,75 @@ String name() default "Harsh";
 eg; @Target({ElementType.TYPE,ElementType.CONSTRUCTOR})
 
 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+MultiThreading
+
+- Running multiple things simultaneoulsy at the OS level is called Multitaking, (Listening Music and Writing text)
+
+- Doing multiple tasks at an Application level is called as Multithreading, while using instagram, you received a notification
+
+Thread is present in runtime stack and executes whatever code it reaches. 
+
+- Thread thread = Thread.currentThread() -> static method that returns thread,
+
+* main is the default thread and it has a priority of 5 (1-10)
+
+Now on this thread object we can call different kinds of methods, we can fetch its name and priority and we can change them.
+
+- Thread.sleep(time) -> it is a method to pause the thread, it throws a checked Exception called Interrupted Exception
+
+*** We should use multiple threads when you have independent tasks to perform. This way other tasks won't have to wait for the main thread. Any of them if required inputs from end user, then it might consume the pc cycles, and other processes will also be waiting. 
+
+*** we use start method to start the thread as it connects out thread to thread scheduler. We don't call the run method
+
+**1) A new thread is created when you create an object of the new thread.
+2) It will perform whatever tasks inside the run method. 
+3) Use Thread.start() method to run the thread
+
+Ways of creating thread:
+1) Using runnable interface: A class implements runnable interface, it overrides run method (task of that thread), in main class we create a Thread Object and pass the runnable object. 
+2) Using Thread class: A class extends Thread class, overrides run method, then create the thread object and call the start method
+3) Using Anonymous Inner Class
+4) Using Lambda Expression
+
+- A child thread was named Thread-0 by default
+
+*** Which thread will be executed first we are not in control of that, it will be decided by processor. The CPU is used efficiently, if a process taking time, starts with other thread
+
+-thread.isAlive() --> boolean method to check if a thread is alive or not
+
+* In multithreading the threads are executing concurrently, it means if their is any milli second wait time for a thread any delay the other thread will start its execution. Parallel processing is when both thread runs independently
+
+Q. if you have a single run method, and you have 3 tasks to run via that same run method, how do you do it?
+
+-> Move all the three tasks (methods) in a same class as the run method class, create 3 different threads with a particular name to indicate that task. Inside the run method, fetch the name of the thread, now use if else conditions to call the methods with which the thread names match
 
 
+*** Consider there is a single resource and multiple threads want to use it, if they use it all at once, the desired output may not be achieved. In that case we can use synchronised keyword, once any thread reach the resource it will lock the resource till it completes its task once the task is completed it realease the lock, so any waiting thread will acquire the resource and start its task again. Resource can be a class or a method.
 
 
+**The StringBuffer which was used more in older version of Java, has all of the methods synchronised so multiple threads cant access it/ Thread safe, that is not the issue with the StringBuilder which was introduced later. They just removed the synchronised keyword
 
+*** we can synchronize a particular part of the code by enclosing it into a synchronized block with a this as a parameter
+eg:
+//some code is here
+synchronized (this) {
+	System.out.println(Thread.currentThread().getName() + " has logged the details");
+	System.out.println(Thread.currentThread().getName() + " has returned following data");
+}
 
+------------
+** States of a Thread /Life Cycle 
 
+New  -> Runnable -> Running -> Dead
 
+** When you create a thread its in the first state i.e. new state, once it is registered with Thread Schedulor i.e we call Thread.start() it goes in runnable state, its ready to execute, when __fill in the blank cpu assigns or Schedulor orders _ it will start executing, during this period it can get into blocked state(Resource not available), Sleep mode, or wait state, after this it gets back to Runnable state and executes when Thread Schedulor ask it to. Once the thread completes its task its in dead state. 
 
-
-
-
-
-
-
-
+**** Due to Cyclic dependencies {a Thread(T1) requires a resource and is holding on r1, another Thread(T2) requires the
+resource r1 hold by Thread(T1) and holds resource r2 required by Thread (T1)} both the threads are in blocked state
+waiting for the resource to be available, they will never be able to come out of the blocked state, this is called
+DeadLock. This situation arrives when you use synchronized keyword improperly.
 
 
 
