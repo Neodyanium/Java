@@ -411,6 +411,8 @@ catch(NegativeArrayIndexException | ArrayIndexOutOfBoundsException e){
 	sout(e.printMessage())
 }
 
+- try with resources is when you open the resouces here -> try(here){} , the modern resources are implement closable/autoclosable interface so it will close automatically. Most class that implement it will have close method defined, you can create your own Autoclosable class by implementing Autoclosable and overriding the close method.
+
                                     Object
                                        |
                                        |
@@ -963,8 +965,27 @@ Resource Sharing: When multiple threads need to access a single resource (like a
 
 Message Passing: In GUI applications, where a background thread does heavy work and needs to "pass" a result back to the Main UI thread to display it.
 
+Refer to the program:  Understanding the flow of the program is necessary, as  both the threads runs almost simultaneously, we used a flag
+ in Buffer class, initailly when a Producer produces the flag is not set, we fetch the value and set the flag, so it
+ is ready to consume. Now the consumer class checks the flag, since it is true it means data is available for
+ consumption so it consumes and unset the flag. Since both the threads are running together the time when consumer
+ checked the flag it might not be set and it went to the else part in wait() state. So when we first produce the data
+ it is necessary we notify the waiting thread, same is the case with producer thread, it's a infinite loop so when
+ the consumer is consuming the flag is true, so producer thread gets in wait() state and as the consumer thread
+ notifies after it consumes the data
 
 
+* Wait() is called when you want some thread to pause it execution until it is notified by some other thread.
+
+* notify() is used to wake up the sleeping thread
+
+*** Wait() and notify() are the methods responsible for inter thread communication
+
+
+* Object Level Locking and Class Level locking, if in a synchronized methods if we have multiple threads with a single object we can access only 1 method, even if the threads are task independent whichever thread gets the lock has the object locked, now if we are inject 2 different objects then both threads can work with it and lock there own object. 
+- In static context (static method is synchronized) if we are using the class reference then it won't matter we can't access the methods as Thread gets class level lock.
+
+Need to implement the BankApp
 
 
 
