@@ -940,10 +940,28 @@ The infinite recusion doesn't occur because they are executed by Daemon Thread n
 
 * Garbage Collector is a daemon thread so it has to execute at least once after the main thread. It might run any number of times but it definitely runs at least once
 
+-----------------------------------------------------------------
+
+*InterThread Communication
+
+- Intra usually means within the system, like Intra College Fest (only college can participate), Inter College Fest(anyone can participate)
 
 
+*** The way I am understanding dependency injection, if you want to use a method/class in another class without creating the class using new keyword. Just create an the object as the instace variable, now you can either pass it via constructor or use a setter and call that method. 
+
+We are using Producer and Consumer problem to see the inter thread communication
+
+*** We can only use wait and notify methods inside a synchronized environment.
 
 
+**The Buffer/Mediater class acts as a Communication Bridge. Without it, the Producer and Consumer would have to be "tightly coupled," meaning they would need to know exactly what the other is doing at every microsecond.
+
+** You should use a mediator class like Queue whenever you have Asynchronous Tasks that need to share information.
+Workload Balancing: If the Producer generates data faster than the Consumer can process it, the Mediator can hold a "backlog" of tasks (using a List or Array) so no data is lost.
+
+Resource Sharing: When multiple threads need to access a single resource (like a printer, a database connection, or a network socket).
+
+Message Passing: In GUI applications, where a background thread does heavy work and needs to "pass" a result back to the Main UI thread to display it.
 
 
 
