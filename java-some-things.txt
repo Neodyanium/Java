@@ -985,7 +985,16 @@ Refer to the program:  Understanding the flow of the program is necessary, as  b
 * Object Level Locking and Class Level locking, if in a synchronized methods if we have multiple threads with a single object we can access only 1 method, even if the threads are task independent whichever thread gets the lock has the object locked, now if we are inject 2 different objects then both threads can work with it and lock there own object. 
 - In static context (static method is synchronized) if we are using the class reference then it won't matter we can't access the methods as Thread gets class level lock.
 
-Need to implement the BankApp
+Need to implement the BankApp.
+
+*When you are using Multiple threads to run some methods on the same object make the methods synchronized, if not done the threads will race to completion and if a thread pause between its transactions to execute another transactions, then we will have corrupt data another threads will be overridden by current paused thread and we will lose values. 
+
+* If the methods are declared as static synchronized the thread will acquire a class level lock.
+
+Q. if mixed methods are used:
+- A Static Synchronized method will not block a Non-Static Synchronized method.
+- They use two different "Monitors" (Locks). Class Level and Object Level can run parallely
+- To keep your bank account safe, all methods that touch the same variable must use the same lock.
 
 
 
