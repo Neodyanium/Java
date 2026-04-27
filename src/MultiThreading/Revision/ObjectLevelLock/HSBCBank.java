@@ -4,20 +4,24 @@ public class HSBCBank {
 
     int accBalance;
 
+    public int getAccBalance(){
+        return accBalance;
+    }
+
     public HSBCBank(int bal){
         accBalance = bal;
     }
 
 
-    public void withdrawal(int money){
+    public synchronized void withdrawal(int money){
          accBalance = accBalance - money;
     }
 
-    public void deposit(int money){
+    public synchronized void deposit(int money){
         accBalance = accBalance + money;
     }
 
-    public void checkBalance(){
+    public synchronized void checkBalance(){
         System.out.println("Balance: "+accBalance);
     }
 }

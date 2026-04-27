@@ -11,5 +11,6 @@ public class ATM extends Thread{
     public void run(){
         System.out.println("ATM Withdrawing Money");
         bank.withdrawal(2000);
+        System.out.println("After atm Withdraw, Balance:"+bank.getAccBalance());
     }
 }

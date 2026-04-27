@@ -8,7 +8,7 @@ public class PhonePe extends Thread{
     }
 
     public void run(){
-        System.out.println("PhonePay Checking Balance");
+        System.out.print("PhonePay Checking Balance ");
         bank.checkBalance();
     }
 }
