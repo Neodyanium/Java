@@ -61,7 +61,7 @@ public class StreamMethods {
                 key -> key,
                 Integer::toBinaryString
         ));
-        System.out.println("Mapped to Integer and its Biary Value:"+binaries);
+        System.out.println("Mapped to Integer and its Binary Value:"+binaries);
     }
 
     public static void countMethod(){

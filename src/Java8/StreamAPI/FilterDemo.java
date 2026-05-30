@@ -18,6 +18,7 @@ public class FilterDemo {
         list.add(2);
         list.add(9);
         List<Integer> l1 = list.stream().filter(i -> i % 2 == 0).collect(Collectors.toList());
+        List<Integer> l2 = list.stream().filter(n -> isEven(n)).collect(Collectors.toList());
         System.out.println(l1);
 
 

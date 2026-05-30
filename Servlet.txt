@@ -1,0 +1,44 @@
+* Client and Server Architecture
+
+- Any device/computer where we can use internet to access via browser to access some service then it is a client.
+- The client is a user or system that is request a specific resource or service from an entity called as Server 
+
+-Internet is a global communication system that links thousands of individual network. It allows the exchange of info between 2 or more computers on a network.
+
+- A machine where you make your service available to people globally can be called as a Server
+- A sever maybe responsible to process one request or more on request time
+
+- Webserver is a software program or server computer which has a world wide web access 
+
+
+- The interaction between the webserver and webbrowser is done with the http protocol
+- When we want to access the service we need to provide the web browser the address(IP) of the machine and if the server has multiple applications we need to provide the port address, but all this things are handled by the DNS (domain name server, ig it is like a registry where they map server name to the server ip)
+
+
+
+* Static and Dynamic Response
+
+- Static response is when the output doesn;t change with User. (Html, CSS)
+
+- Dynamic response is which will change with the user (Servlet, JSP, php etc)
+
+consider an eg, You are filling a registration form so that is a static html/css page, whereas upon registration you receive, Your Name + Registration details that is a dynamic response
+
+We use Spring MVC framework, which is build on top of the tomcat web server, it is abstracted out.
+
+
+*Servlet
+
+-Whenever we want our Server to provide a dynamic response we will use a Servlet.
+
+- In a webserver we will have a server container, that is a runtime environment that is reponsible to run the java code. It does not have the main method, web container/servlet container runs it no jvm involved. 
+
+-To make it a server you will require a server software like Apache Tomcat
+
+- Servlet is a Java program, residing on the server computer it is responsible to process the incoming http service and provide the dynamic response back to client. This can include complex logic and database connnections
+
+* To develop a Servlet application we require Java EE perspective in Eclipse IDE, not sure about others yet and a server application like Apache Tomcat, we can configure the server from IDE, we should set non busy port for tomcat, there is a separate port for Admin
+
+
+
+

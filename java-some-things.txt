@@ -997,12 +997,69 @@ Q. if mixed methods are used:
 - To keep your bank account safe, all methods that touch the same variable must use the same lock.
 
 
+-------------
+Executor Framework
 
 
 
 
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Stream API - Streams are java objects, A Stream is essentially a wrapper around a data source that allows you to operate on that data. In functional and declarative way.
+
+- A stream doesn't "hold" its own data, it doesn't modify the orignal source, lazy in nature (only executed when required).
+
+- It is used in a pipeline structure, we create a stream, call the required operations for modification and then a terminal operation. 
+
+Common Operations: Data Filtering & transformation, aggregation, Data Conversion(Mapping) 
+
+**Many predefined Functional interfaces are used here. They are to be passed to this stream, which they can use. 
+
+-Predicate : It has test method, takes argument and returns a boolean. Used with filter method
+
+-Function: It has apply method, takes the argument and returns user defined transformation. Used with map method
+
+-Consumer: It has accept method, takes the argument and has void return type. Used with forEach() or peek() method
+
+-Supplier: It has get method, takes no arguments and return T type. Used in 
 
 
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Yes, you absolutely can use WHERE and GROUP BY together! In fact, using them together is the standard way to generate specific reports.
+
+The key is understanding that they operate at different stages of the query. Think of it as a two-step filtering process:
+
+WHERE filters individual rows before any grouping happens.
+
+GROUP BY then takes the remaining rows and organizes them into buckets.
+
+1. The Execution Flow
+When you combine them, SQL follows this logical order:
+
+Step 1: Look at the FROM table.
+
+Step 2: Apply the WHERE filter to discard rows you don't care about.
+
+Step 3: Take the surviving rows and "squash" them into groups using GROUP BY.
+
+Step 4: Run your aggregate functions (like SUM or COUNT) on those groups.
+
+eg:
+
+SELECT department, SUM(salary) AS total_payroll
+FROM employees
+WHERE hire_date > '2020-12-31'  -- Step 1: Filter individual employees first
+GROUP BY department;            -- Step 2: Group the filtered employees by department
+
+eg 2:
+SELECT department, COUNT(*) AS emp_count
+FROM employees
+WHERE salary > 50000              -- 1. Only look at high earners
+GROUP BY department               -- 2. Group them by department
+HAVING COUNT(*) > 5               -- 3. Only show departments that have more than 5 high earners
+ORDER BY emp_count DESC;          -- 4. Sort the result
 
 
 
